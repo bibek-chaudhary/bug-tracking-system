@@ -21,5 +21,12 @@ namespace BugTracker.Api.Controllers
             await _authService.RegisterAsync(request);
             return Ok(new { Message = "User registered successfully." });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        {
+            var token = await _authService.LoginAsync(request);
+            return Ok(new { Token = token });
+        }
     }
 }
