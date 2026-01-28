@@ -37,6 +37,12 @@ namespace BugTracker.Domain.Entities
 
         public void AssignTo(string developerUserId)
         {
+            if (AssignedToUserId != null)
+                throw new InvalidOperationException("Bug is already assigned.");
+
+            if (Status != BugStatus.Open)
+                throw new InvalidOperationException("Only open bugs can be assigned.");
+
             AssignedToUserId = developerUserId;
             Status = BugStatus.InProgress;
         }

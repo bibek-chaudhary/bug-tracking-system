@@ -59,5 +59,16 @@ namespace BugTracker.Api.Controllers
             var bugs = await _bugService.SearchUnassignedBugAsync(title);
             return Ok(bugs);
         }
+
+        [HttpPost("{id:guid}/assign")]
+        [Authorize(Roles = "Developer")]
+        public async Task<IActionResult> AssignBugToSelf(Guid id)
+        {
+            var developerId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+
+            await _bugService.AssignBugToSelfAsync(id, developerId);
+
+            return Ok("Bug assigned to you successfully.");
+        }
     }
 }

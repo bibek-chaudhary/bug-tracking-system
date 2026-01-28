@@ -13,5 +13,6 @@ namespace BugTracker.Application.Interfaces.Services
         Task<List<MyBugsResponseDto>> GetMyBugsAsync(string userId);
         Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId);
         Task<List<UnassignedBugResponseDto>> SearchUnassignedBugAsync(string? title);
+        Task AssignBugToSelfAsync(Guid bugId, string developerId);
     }
 }

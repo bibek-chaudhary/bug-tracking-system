@@ -100,5 +100,17 @@ namespace BugTracker.Infrastructure.Services
        .AsNoTracking()
        .ToListAsync();
         }
+
+        public async Task AssignBugToSelfAsync(Guid bugId, string developerId)
+        {
+            var bug = await _context.Bugs.FirstOrDefaultAsync(b => b.Id == bugId);
+
+            if (bug == null)
+                throw new KeyNotFoundException("Bug not found.");
+
+            bug.AssignTo(developerId);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
