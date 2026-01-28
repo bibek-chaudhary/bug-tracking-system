@@ -10,5 +10,6 @@ namespace BugTracker.Application.Interfaces.Services
     public interface IAuthService
     {
         Task RegisterAsync(RegisterRequestDto requestDto);
+        Task<string> LoginAsync(LoginRequestDto requestDto);
     }
 }
