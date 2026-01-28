@@ -47,9 +47,25 @@ namespace BugTracker.Domain.Entities
             Status = BugStatus.InProgress;
         }
 
-        public void UpdateStatus(BugStatus newStatus)
+        public void UpdateStatus(BugStatus newStatus, string developerId)
         {
-            Status = newStatus;
+            if (AssignedToUserId != developerId)
+                throw new UnauthorizedAccessException("You are not assigned to this bug.");
+
+            if (Status == BugStatus.InProgress && newStatus == BugStatus.Resolved)
+            {
+                Status = BugStatus.Resolved;
+                return;
+            }
+
+            if (Status == BugStatus.Resolved && newStatus == BugStatus.Closed)
+            {
+                Status = BugStatus.Closed;
+                return;
+            }
+
+            throw new InvalidOperationException(
+                $"Invalid status transition from {Status} to {newStatus}");
         }
     }
 }

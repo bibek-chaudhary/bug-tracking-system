@@ -1,4 +1,5 @@
 ﻿using BugTracker.Application.DTOs.Bugs;
+using BugTracker.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace BugTracker.Application.Interfaces.Services
         Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId);
         Task<List<UnassignedBugResponseDto>> SearchUnassignedBugAsync(string? title);
         Task AssignBugToSelfAsync(Guid bugId, string developerId);
+        Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId);
     }
 }
