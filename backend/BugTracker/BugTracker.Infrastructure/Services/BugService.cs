@@ -77,5 +77,28 @@ namespace BugTracker.Infrastructure.Services
                 }).ToList()
             }).FirstOrDefaultAsync();
         }
+
+        public async Task<List<UnassignedBugResponseDto>> SearchUnassignedBugAsync(string? title)
+        {
+            var query = _context.Bugs.Where(b => b.AssignedToUserId == null);
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(b => b.Title.ToLower().Contains(title.ToLower()));
+            }
+
+            return await query
+       .OrderByDescending(b => b.CreatedAt)
+       .Select(b => new UnassignedBugResponseDto
+       {
+           Id = b.Id,
+           Title = b.Title,
+           Severity = b.Severity,
+           Status = b.Status,
+           CreatedAt = b.CreatedAt
+       })
+       .AsNoTracking()
+       .ToListAsync();
+        }
     }
 }

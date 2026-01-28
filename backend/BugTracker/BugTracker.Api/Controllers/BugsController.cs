@@ -52,6 +52,12 @@ namespace BugTracker.Api.Controllers
             return Ok(bug);
         }
 
-
+        [HttpGet("unassigned")]
+        [Authorize(Roles = "Developer")]
+        public async Task <IActionResult> GetUnassignedBugs([FromQuery] string? title)
+        {
+            var bugs = await _bugService.SearchUnassignedBugAsync(title);
+            return Ok(bugs);
+        }
     }
 }
