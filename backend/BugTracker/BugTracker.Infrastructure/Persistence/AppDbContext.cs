@@ -14,5 +14,15 @@ namespace BugTracker.Infrastructure.Persistence
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Bug> Bugs => Set<Bug>();
+        public DbSet<BugAttachment> BugAttachments => Set<BugAttachment>();
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        }
     }
 }
