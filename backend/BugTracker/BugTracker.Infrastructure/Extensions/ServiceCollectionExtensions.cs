@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BugTracker.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Infrastructure.Extensions
 {
@@ -20,8 +21,9 @@ namespace BugTracker.Infrastructure.Extensions
                 options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("BugTracker.Infrastructure")));
 
-            services.AddIdentityCore<ApplicationUser>()
-                .AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
             return services;
         }
     }
