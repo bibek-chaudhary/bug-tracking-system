@@ -37,5 +37,21 @@ namespace BugTracker.Api.Controllers
             return Ok(bugs);
         }
 
+        [HttpGet("{id:guid}")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetBugDetails(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException();
+
+            var bug = await _bugService.GetBugDetailAsync(id, userId);
+
+            if (bug == null)
+                return NotFound("Bug not found");
+
+            return Ok(bug);
+        }
+
+
     }
 }

@@ -56,5 +56,26 @@ namespace BugTracker.Infrastructure.Services
         })
         .ToListAsync();
         }
+
+        public async Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId)
+        {
+            return await _context.Bugs.Where(b => b.Id == bugId && b.CreatedByUserId == userId).Select(b => new BugDetailsResponseDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Description = b.Description,
+                Severity = b.Severity,
+                Status = b.Status,
+                ReproductionSteps = b.ReproductionSteps,
+                CreateAt = b.CreatedAt,
+                Attachments = b.Attachments
+                .Select(a => new BugAttachmentDto
+                {
+                    Id = a.Id,
+                    FileName = a.FileName,
+                    FilePath = a.FilePath
+                }).ToList()
+            }).FirstOrDefaultAsync();
+        }
     }
 }
