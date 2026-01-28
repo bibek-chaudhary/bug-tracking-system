@@ -2,6 +2,7 @@ using BugTracker.Application.Interfaces.Services;
 using BugTracker.Infrastructure.Extensions;
 using BugTracker.Infrastructure.Identity;
 using BugTracker.Infrastructure.Services;
+using BugTracker.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -60,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 
