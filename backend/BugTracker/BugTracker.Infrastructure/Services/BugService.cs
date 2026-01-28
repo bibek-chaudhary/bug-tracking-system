@@ -1,6 +1,7 @@
 ﻿using BugTracker.Application.DTOs.Bugs;
 using BugTracker.Application.Interfaces.Services;
 using BugTracker.Domain.Entities;
+using BugTracker.Domain.Enums;
 using BugTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -109,6 +110,18 @@ namespace BugTracker.Infrastructure.Services
                 throw new KeyNotFoundException("Bug not found.");
 
             bug.AssignTo(developerId);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId)
+        {
+            var bug = await _context.Bugs.FirstOrDefaultAsync(b => b.Id == bugId);
+
+            if (bug == null)
+                throw new KeyNotFoundException("Bug not found.");
+
+            bug.UpdateStatus(status, developerId);
 
             await _context.SaveChangesAsync();
         }
