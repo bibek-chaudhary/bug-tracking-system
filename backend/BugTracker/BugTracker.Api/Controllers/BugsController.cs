@@ -8,7 +8,7 @@ namespace BugTracker.Api.Controllers
 {
     [ApiController]
     [Route("api/bugs")]
-    [Authorize(Roles = "User")]
+    //[Authorize(Roles = "User")]
     public class BugsController : ControllerBase
     {
         private readonly IBugService _bugService;
@@ -27,15 +27,15 @@ namespace BugTracker.Api.Controllers
             return Ok("Bug reported successfully");
         }
 
-        //[HttpPost]
-        //public IActionResult Test()
-        //{
-        //    return Ok("HIT");
-        //}
+        [HttpGet("my")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetMyBugs()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
 
-        [HttpGet]
-        public IActionResult Ping() => Ok("API works");
-
+            var bugs = await _bugService.GetMyBugsAsync(userId);
+            return Ok(bugs);
+        }
 
     }
 }

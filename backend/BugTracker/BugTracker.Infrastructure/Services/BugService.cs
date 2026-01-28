@@ -2,6 +2,7 @@
 using BugTracker.Application.Interfaces.Services;
 using BugTracker.Domain.Entities;
 using BugTracker.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,22 +25,8 @@ namespace BugTracker.Infrastructure.Services
         {
             var bug = new Bug(request.Title, request.Description, request.Severity, userId, request.ReproductionSteps);
 
-            //if (request.Attachments != null)
-            //{
-            //    foreach (var attachment in request.Attachments)
-            //    {
-            //        var (fileName, filePath) = await _fileStorage.SaveAsync(attachment);
-
-            //        bug.Attachments.Add(new BugAttachment(fileName, filePath, bug.Id));
-            //    }
-            //}
-
-            //_context.Bugs.Add(bug);
-            //await _context.SaveChangesAsync();
-
-
             _context.Bugs.Add(bug);
-            await _context.SaveChangesAsync(); // Bug.Id is generated here
+            await _context.SaveChangesAsync(); 
 
             if (request.Attachments != null)
             {
@@ -52,7 +39,22 @@ namespace BugTracker.Infrastructure.Services
             }
 
             await _context.SaveChangesAsync();
+        }
 
+        public async Task<List<MyBugsResponseDto>> GetMyBugsAsync(string userId)
+        {
+            return await _context.Bugs
+        .Where(b => b.CreatedByUserId == userId)
+        .OrderByDescending(b => b.CreatedAt)
+        .Select(b => new MyBugsResponseDto
+        {
+            Id = b.Id,
+            Title = b.Title,
+            Severity = b.Severity,
+            Status = b.Status,
+            CreatedAt = b.CreatedAt
+        })
+        .ToListAsync();
         }
     }
 }
