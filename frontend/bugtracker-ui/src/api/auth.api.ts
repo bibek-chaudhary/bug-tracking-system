@@ -1,8 +1,27 @@
 import type { LoginRequest, RegisterRequest } from "../types/auth.types";
+import type { ApiResponse } from "../types/api.types";
 import api from "./axios";
 
 export const authApi = {
-  login: (payload: LoginRequest) => api.post<string>("/auth/login", payload),
+  login: async (payload: LoginRequest) => {
+    const response = await api.post<ApiResponse<{ token: string }>>(
+      "/auth/login",
+      payload,
+    );
 
-  register: (payload: RegisterRequest) => api.post("/auth/register", payload),
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response.data;
+  },
+
+  register: async (payload: RegisterRequest) => {
+    const response = await api.post<ApiResponse<null>>(
+      "/auth/register",
+      payload,
+    );
+
+    return response.data;
+  },
 };
