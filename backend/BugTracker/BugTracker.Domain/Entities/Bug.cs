@@ -44,7 +44,6 @@ namespace BugTracker.Domain.Entities
                 throw new InvalidOperationException("Only open bugs can be assigned.");
 
             AssignedToUserId = developerUserId;
-            Status = BugStatus.InProgress;
         }
 
         public void UpdateStatus(BugStatus newStatus, string developerId)
