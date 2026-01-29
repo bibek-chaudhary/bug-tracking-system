@@ -16,7 +16,7 @@ const LoginPage = () => {
       const res = await authApi.login({ email, password });
       if (res.success) {
         login(res.data!.token);
-        navigate("/");
+        navigate("/developer");
       }
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");

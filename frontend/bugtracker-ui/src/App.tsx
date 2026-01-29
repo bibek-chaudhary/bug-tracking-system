@@ -3,6 +3,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import RegisterPage from "./pages/RegisterPage";
+import ProtectedRoute from "./component/ProtectedRoute";
+import UserLayout from "./layouts/UserLayout";
+import DeveloperLayout from "./layouts/DeveloperLayout";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   return (
@@ -10,7 +14,31 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/" element={<Dashboard />} />
+        {/* <Route path="/" element={<Dashboard />} /> */}
+
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute allowedRoles={["User"]}>
+              <UserLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+        </Route>
+
+        {/* Developer Routes */}
+        <Route
+          path="/developer"
+          element={
+            <ProtectedRoute allowedRoles={["Developer"]}>
+              <DeveloperLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+        </Route>
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
   );

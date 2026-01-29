@@ -1,7 +1,9 @@
 import { createContext, useContext, useState } from "react";
+import { getUserRoleFromToken } from "../utils/jwt";
 
 type AuthContextType = {
   token: string | null;
+  role: string | null;
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
@@ -13,6 +15,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token"),
   );
+
+  const role = getUserRoleFromToken(token);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
@@ -26,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ token, isAuthenticated: !!token, login, logout }}
+      value={{ token, role, isAuthenticated: !!token, login, logout }}
     >
       {children}
     </AuthContext.Provider>
