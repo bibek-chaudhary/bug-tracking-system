@@ -24,8 +24,8 @@ namespace BugTracker.Api.Controllers
         public async Task<IActionResult> GetDevelopers()
         {
             var developers = await _userService.GetDevelopersAsync();
-            //return Ok(developers);
-            return Ok(ApiResponse<List<DeveloperDto>>.Ok(developers, "Developers fetched successfully"));
+            return Ok(developers);
+            //return Ok(ApiResponse<List<DeveloperDto>>.Ok(developers, "Developers fetched successfully"));
         }
     }
 
