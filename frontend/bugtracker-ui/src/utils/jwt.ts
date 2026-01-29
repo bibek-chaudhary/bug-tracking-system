@@ -1,17 +1,11 @@
 import { jwtDecode } from "jwt-decode";
 
-interface JwtPayload {
-  role?: string | string[];
-}
-
 export const getUserRoleFromToken = (token: string | null): string | null => {
   if (!token) return null;
 
-  const decoded = jwtDecode<JwtPayload>(token);
-
-  if (Array.isArray(decoded.role)) {
-    return decoded.role[0];
-  }
-
-  return decoded.role ?? null;
+  if (!token) return null;
+  const decoded: any = jwtDecode(token);
+  const roles =
+    decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  return roles || null;
 };

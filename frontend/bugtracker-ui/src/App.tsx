@@ -8,6 +8,7 @@ import UserLayout from "./layouts/UserLayout";
 import DeveloperLayout from "./layouts/DeveloperLayout";
 import Unauthorized from "./pages/Unauthorized";
 import MyBugsPage from "./pages/MyBugsPage";
+import ReportBugPage from "./pages/ReportBugPage";
 
 function App() {
   return (
@@ -26,9 +27,9 @@ function App() {
           }
         >
           <Route index element={<MyBugsPage />} />
+          <Route path="report" element={<ReportBugPage />} />
         </Route>
 
-        {/* Developer Routes */}
         <Route
           path="/developer"
           element={

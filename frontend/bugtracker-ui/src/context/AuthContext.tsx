@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const role = getUserRoleFromToken(token);
+  console.log("role from token", token)
+  console.log("role from suth", role)
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
