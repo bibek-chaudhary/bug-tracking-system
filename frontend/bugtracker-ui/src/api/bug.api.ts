@@ -39,4 +39,7 @@ export const bugsApi = {
       },
     });
   },
+
+  assignBugToDeveloper: (bugId: string, developerId: string) =>
+    api.post(`/bugs/${bugId}/assign`, { developerId }),
 };
