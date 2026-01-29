@@ -4,6 +4,7 @@ using BugTracker.Application.Interfaces.Services;
 using BugTracker.Domain.Entities;
 using BugTracker.Domain.Enums;
 using BugTracker.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -200,7 +201,7 @@ namespace BugTracker.Infrastructure.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId)
+        public async Task   UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId)
         {
             var bug = await _context.Bugs.FirstOrDefaultAsync(b => b.Id == bugId);
 
@@ -211,5 +212,22 @@ namespace BugTracker.Infrastructure.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task AssignBugAsync(Guid bugId, string developerId, string userId)
+        {
+            var bug = await _context.Bugs
+                .FirstOrDefaultAsync(b => b.Id == bugId);
+
+            if (bug == null)
+                throw new KeyNotFoundException("Bug not found");
+
+            if (bug.CreatedByUserId != userId)
+                throw new UnauthorizedAccessException("You can assign only your own bugs");
+
+            bug.AssignTo(developerId);
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

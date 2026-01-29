@@ -106,5 +106,18 @@ namespace BugTracker.Api.Controllers
 
             return Ok(ApiResponse<string>.Ok("Bug status updated successfully"));
         }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("{id:guid}/assign")]
+        public async Task<IActionResult> AssignBug( Guid id, [FromBody] AssignBugRequestDto request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException();
+
+            await _bugService.AssignBugAsync(id, request.DeveloperId, userId);
+
+            return Ok(ApiResponse<string>.Ok("Bug assigned to you successfully"));
+        }
+
     }
 }

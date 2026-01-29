@@ -16,6 +16,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IBugService, BugService>();
 builder.Services.AddScoped<FileStorageService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAuthentication(options =>
 {
