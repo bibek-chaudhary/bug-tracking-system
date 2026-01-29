@@ -32,3 +32,11 @@ export interface PagedResult<T> {
   page: number;
   pageSize: number;
 }
+
+export interface CreateBugRequest {
+  title: string;
+  description: string;
+  severity: string;
+  reproductionSteps: string;
+  attachments?: File[];
+}

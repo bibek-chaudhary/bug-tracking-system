@@ -8,15 +8,17 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, role } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log("role", role);
       const res = await authApi.login({ email, password });
       if (res.success) {
         login(res.data!.token);
-        navigate("/user");
+        if (role === "User") navigate("/user");
+        else navigate("/developer");
       }
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
