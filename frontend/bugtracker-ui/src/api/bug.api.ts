@@ -1,9 +1,4 @@
-import type {
-  BugListItem,
-  BugQueryParams,
-  CreateBugRequest,
-  PagedResult,
-} from "../types/bug.types";
+import type { BugQueryParams, CreateBugRequest } from "../types/bug.types";
 import api from "./axios";
 
 export const bugsApi = {
@@ -13,8 +8,11 @@ export const bugsApi = {
     return response.data;
   },
 
-  getUnassignedBugs: (params: BugQueryParams) =>
-    api.get<PagedResult<BugListItem>>("/bugs/unassigned", { params }),
+  getUnassignedBugs: async (params: BugQueryParams) => {
+    const response = await api.get("/bugs/unassigned", { params });
+
+    return response.data;
+  },
 
   getBugDetails: (id: string) => api.get(`/bugs/${id}`),
 

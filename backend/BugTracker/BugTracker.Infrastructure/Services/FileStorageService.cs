@@ -10,9 +10,10 @@ namespace BugTracker.Infrastructure.Services
 {
     public class FileStorageService
     {
-        private readonly string _uploadPath = "Uploads";
+        private readonly string _uploadPath = Path.Combine("wwwroot", "uploads");
 
-        public async Task<(string fileName, string filePath)> SaveAsync(IFormFile file)
+
+        public async Task<(string fileName, string fileUrl)> SaveAsync(IFormFile file)
         {
             if (!Directory.Exists(_uploadPath))
                 Directory.CreateDirectory(_uploadPath);
@@ -21,12 +22,12 @@ namespace BugTracker.Infrastructure.Services
             var fullPath = Path.Combine(_uploadPath, uniqueName);
 
             using var stream = new FileStream(fullPath, FileMode.Create);
-
             await file.CopyToAsync(stream);
 
-            return (file.FileName, fullPath);
+            var fileUrl = $"/uploads/{uniqueName}";
+
+            return (file.FileName, fileUrl);
         }
-    
-        //public async Task<> SaveFile(List<IFormFile> file,)
+
     }
 }

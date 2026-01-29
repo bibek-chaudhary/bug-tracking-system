@@ -1,7 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./component/ProtectedRoute";
 import UserLayout from "./layouts/UserLayout";
@@ -9,6 +8,8 @@ import DeveloperLayout from "./layouts/DeveloperLayout";
 import Unauthorized from "./pages/Unauthorized";
 import MyBugsPage from "./pages/MyBugsPage";
 import ReportBugPage from "./pages/ReportBugPage";
+import UnassignedBugsPage from "./pages/UnassignedBugsPage";
+import BugDetailsPage from "./pages/BugDetailsPage";
 
 function App() {
   return (
@@ -38,9 +39,12 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
+          <Route index element={<UnassignedBugsPage />} />
+          <Route path="assigned" element={<MyBugsPage />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/bugs/:id" element={<BugDetailsPage />} />
+
       </Routes>
     </BrowserRouter>
   );

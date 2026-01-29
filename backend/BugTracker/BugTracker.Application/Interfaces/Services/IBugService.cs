@@ -12,7 +12,7 @@ namespace BugTracker.Application.Interfaces.Services
     public interface IBugService
     {
         Task CreateBugAsync(CreateBugRequestDto request, string userId);
-        Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync( string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort);
+        Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync( string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort, string role);
         Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId);
         Task<PagedResult<UnassignedBugResponseDto>> SearchUnassignedBugsAsync( BugFilterQuery filter, PaginationQuery pagination, SortQuery sort);
         Task AssignBugToSelfAsync(Guid bugId, string developerId);

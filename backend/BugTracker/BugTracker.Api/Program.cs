@@ -76,6 +76,8 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+app.UseStaticFiles();
+
 app.UseCors("FrontendPolicy");
 
 app.UseAuthentication();

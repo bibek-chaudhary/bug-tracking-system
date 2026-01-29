@@ -44,10 +44,14 @@ namespace BugTracker.Infrastructure.Services
         }
 
 
-        public async Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync(string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort)
+        public async Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync(string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort, string role)
         {
             var query = _context.Bugs
-                .Where(b => b.CreatedByUserId == userId);
+            .Where(b =>
+                 role == "User"
+                    ? b.CreatedByUserId == userId
+                    : b.AssignedToUserId == userId
+            );
 
             // Filters
             if (!string.IsNullOrWhiteSpace(filter.Title))
