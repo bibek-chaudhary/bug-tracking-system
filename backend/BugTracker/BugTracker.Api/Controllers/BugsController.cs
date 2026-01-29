@@ -1,4 +1,5 @@
-﻿using BugTracker.Application.DTOs.Bugs;
+﻿using BugTracker.Application.Common;
+using BugTracker.Application.DTOs.Bugs;
 using BugTracker.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,13 +30,17 @@ namespace BugTracker.Api.Controllers
 
         [HttpGet("my")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetMyBugs()
+        public async Task<IActionResult> GetMyBugs( [FromQuery] BugFilterQuery filter, [FromQuery] PaginationQuery pagination, [FromQuery] SortQuery sort)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException();
 
-            var bugs = await _bugService.GetMyBugsAsync(userId);
-            return Ok(bugs);
+            var result = await _bugService
+                .GetMyBugsAsync(userId, filter, pagination, sort);
+
+            return Ok(result);
         }
+
 
         [HttpGet("{id:guid}")]
         [Authorize(Roles = "User")]
@@ -54,10 +59,10 @@ namespace BugTracker.Api.Controllers
 
         [HttpGet("unassigned")]
         [Authorize(Roles = "Developer")]
-        public async Task <IActionResult> GetUnassignedBugs([FromQuery] string? title)
+        public async Task<IActionResult> GetUnassignedBugs([FromQuery] BugFilterQuery filter, [FromQuery] PaginationQuery pagination, [FromQuery] SortQuery sort)
         {
-            var bugs = await _bugService.SearchUnassignedBugAsync(title);
-            return Ok(bugs);
+            var result = await _bugService.SearchUnassignedBugsAsync(filter, pagination, sort);
+            return Ok(result);
         }
 
         [HttpPost("{id:guid}/assign")]

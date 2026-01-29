@@ -1,4 +1,5 @@
-﻿using BugTracker.Application.DTOs.Bugs;
+﻿using BugTracker.Application.Common;
+using BugTracker.Application.DTOs.Bugs;
 using BugTracker.Application.Interfaces.Services;
 using BugTracker.Domain.Entities;
 using BugTracker.Domain.Enums;
@@ -42,23 +43,66 @@ namespace BugTracker.Infrastructure.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<MyBugsResponseDto>> GetMyBugsAsync(string userId)
+
+        public async Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync(string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort)
         {
-            return await _context.Bugs
-        .Where(b => b.CreatedByUserId == userId)
-        .OrderByDescending(b => b.CreatedAt)
-        .Select(b => new MyBugsResponseDto
-        {
-            Id = b.Id,
-            Title = b.Title,
-            Severity = b.Severity,
-            Status = b.Status,
-            CreatedAt = b.CreatedAt
-        })
-        .ToListAsync();
+            var query = _context.Bugs
+                .Where(b => b.CreatedByUserId == userId);
+
+            // Filters
+            if (!string.IsNullOrWhiteSpace(filter.Title))
+                query = query.Where(b =>
+                    b.Title.ToLower().Contains(filter.Title.ToLower()));
+
+            if (filter.Status.HasValue)
+                query = query.Where(b => b.Status == filter.Status);
+
+            if (filter.Severity.HasValue)
+                query = query.Where(b => b.Severity == filter.Severity);
+
+            // Sorting
+            query = sort.SortBy.ToLower() switch
+            {
+                "severity" => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.Severity)
+                    : query.OrderByDescending(b => b.Severity),
+
+                "status" => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.Status)
+                    : query.OrderByDescending(b => b.Status),
+
+                _ => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.CreatedAt)
+                    : query.OrderByDescending(b => b.CreatedAt)
+            };
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .Select(b => new MyBugsResponseDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Severity = b.Severity,
+                    Status = b.Status,
+                    CreatedAt = b.CreatedAt
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new PagedResult<MyBugsResponseDto>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize
+            };
         }
 
-        public async Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId)
+
+    public async Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId)
         {
             return await _context.Bugs.Where(b => b.Id == bugId && b.CreatedByUserId == userId).Select(b => new BugDetailsResponseDto
             {
@@ -79,27 +123,65 @@ namespace BugTracker.Infrastructure.Services
             }).FirstOrDefaultAsync();
         }
 
-        public async Task<List<UnassignedBugResponseDto>> SearchUnassignedBugAsync(string? title)
+
+        public async Task<PagedResult<UnassignedBugResponseDto>> SearchUnassignedBugsAsync(
+        BugFilterQuery filter,
+        PaginationQuery pagination,
+        SortQuery sort)
         {
-            var query = _context.Bugs.Where(b => b.AssignedToUserId == null);
+            var query = _context.Bugs
+                .Where(b => b.AssignedToUserId == null);
 
-            if (!string.IsNullOrWhiteSpace(title))
+            // Filters
+            if (!string.IsNullOrWhiteSpace(filter.Title))
+                query = query.Where(b =>
+                    b.Title.ToLower().Contains(filter.Title.ToLower()));
+
+            if (filter.Status.HasValue)
+                query = query.Where(b => b.Status == filter.Status);
+
+            if (filter.Severity.HasValue)
+                query = query.Where(b => b.Severity == filter.Severity);
+
+            // Sorting
+            query = sort.SortBy.ToLower() switch
             {
-                query = query.Where(b => b.Title.ToLower().Contains(title.ToLower()));
-            }
+                "severity" => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.Severity)
+                    : query.OrderByDescending(b => b.Severity),
 
-            return await query
-       .OrderByDescending(b => b.CreatedAt)
-       .Select(b => new UnassignedBugResponseDto
-       {
-           Id = b.Id,
-           Title = b.Title,
-           Severity = b.Severity,
-           Status = b.Status,
-           CreatedAt = b.CreatedAt
-       })
-       .AsNoTracking()
-       .ToListAsync();
+                "status" => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.Status)
+                    : query.OrderByDescending(b => b.Status),
+
+                _ => sort.SortOrder == "asc"
+                    ? query.OrderBy(b => b.CreatedAt)
+                    : query.OrderByDescending(b => b.CreatedAt)
+            };
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .Select(b => new UnassignedBugResponseDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Severity = b.Severity,
+                    Status = b.Status,
+                    CreatedAt = b.CreatedAt
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new PagedResult<UnassignedBugResponseDto>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize
+            };
         }
 
         public async Task AssignBugToSelfAsync(Guid bugId, string developerId)
