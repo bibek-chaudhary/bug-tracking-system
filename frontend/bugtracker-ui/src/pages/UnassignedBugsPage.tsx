@@ -6,6 +6,8 @@ import type {
   PagedResult,
 } from "../types/bug.types";
 import BugFilters from "../component/BugFilters";
+import BugTable from "../component/BugTable";
+import Pagination from "../component/Pagination";
 
 export default function UnassignedBugsPage() {
   const [bugs, setBugs] = useState<PagedResult<BugListItem>>();
@@ -80,34 +82,17 @@ export default function UnassignedBugsPage() {
       <BugFilters
         onFilterChange={(f) => setFilters((prev) => ({ ...prev, ...f }))}
       />
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">Title</th>
-            <th className="p-2 border">Severity</th>
-            <th className="p-2 border">Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {bugs &&
-            bugs?.items?.length > 0 &&
-            bugs?.items.map((bug) => (
-              <tr key={bug.id}>
-                <td className="p-2 border">{bug.title}</td>
-                <td className="p-2 border">{bug.severity}</td>
-                <td className="p-2 border">
-                  <button
-                    onClick={() => handleAssign(bug.id)}
-                    className="bg-green-600 text-white px-3 py-1 rounded"
-                  >
-                    Assign to me
-                  </button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      {bugs && bugs?.items?.length > 0 && (
+        <>
+          <BugTable bugs={bugs.items} onSort={handleSort} />
+          <Pagination
+            page={bugs.page}
+            pageSize={bugs.pageSize}
+            totalCount={bugs.totalCount}
+            onPageChange={setPage}
+          />
+        </>
+      )}
     </div>
   );
 }

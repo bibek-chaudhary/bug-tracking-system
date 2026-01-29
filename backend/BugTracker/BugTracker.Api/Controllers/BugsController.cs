@@ -29,14 +29,17 @@ namespace BugTracker.Api.Controllers
         }
 
         [HttpGet("my")]
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetMyBugs( [FromQuery] BugFilterQuery filter, [FromQuery] PaginationQuery pagination, [FromQuery] SortQuery sort)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new UnauthorizedAccessException();
 
+            var role = User.FindFirstValue(ClaimTypes.Role)
+                 ?? throw new UnauthorizedAccessException();
+
+
             var result = await _bugService
-                .GetMyBugsAsync(userId, filter, pagination, sort);
+                .GetMyBugsAsync(userId, filter, pagination, sort, role);
 
             return Ok(ApiResponse<IEnumerable<MyBugsResponseDto>>.Ok(
                 result.Items,
@@ -51,7 +54,6 @@ namespace BugTracker.Api.Controllers
 
 
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> GetBugDetails(Guid id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)

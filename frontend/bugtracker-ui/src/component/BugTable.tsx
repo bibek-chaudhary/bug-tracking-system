@@ -1,11 +1,15 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import type { BugListItem } from "../types/bug.types";
 
 interface Props {
   bugs: BugListItem[];
   onSort: (field: string) => void;
+  onAssign?: (bugId: string) => Promise<void>;
 }
 
-const BugTable: React.FC<Props> = ({ bugs, onSort }) => {
+const BugTable: React.FC<Props> = ({ bugs, onSort, onAssign }) => {
+  const { role } = useAuth();
   return (
     <table className="w-full border border-gray-300">
       <thead className="bg-gray-200">
@@ -25,6 +29,7 @@ const BugTable: React.FC<Props> = ({ bugs, onSort }) => {
           >
             Created At
           </th>
+          <th className="p-2 border">Action</th>
         </tr>
       </thead>
 
@@ -36,6 +41,17 @@ const BugTable: React.FC<Props> = ({ bugs, onSort }) => {
             <td className="p-2">{bug.status}</td>
             <td className="p-2">
               {new Date(bug.createdAt).toLocaleDateString()}
+            </td>
+            <td className="p-2 border">
+              <button
+                onClick={() => onAssign?.(bug.id)}
+                className="bg-green-600 text-white px-3 py-1 rounded"
+              >
+                Assign to me
+              </button>
+              <Link to={`/bugs/${bug.id}`} className="text-blue-600 underline">
+                View
+              </Link>
             </td>
           </tr>
         ))}

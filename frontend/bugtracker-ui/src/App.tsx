@@ -9,6 +9,7 @@ import Unauthorized from "./pages/Unauthorized";
 import MyBugsPage from "./pages/MyBugsPage";
 import ReportBugPage from "./pages/ReportBugPage";
 import UnassignedBugsPage from "./pages/UnassignedBugsPage";
+import BugDetailsPage from "./pages/BugDetailsPage";
 
 function App() {
   return (
@@ -39,8 +40,11 @@ function App() {
           }
         >
           <Route index element={<UnassignedBugsPage />} />
+          <Route path="assigned" element={<MyBugsPage />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/bugs/:id" element={<BugDetailsPage />} />
+
       </Routes>
     </BrowserRouter>
   );
