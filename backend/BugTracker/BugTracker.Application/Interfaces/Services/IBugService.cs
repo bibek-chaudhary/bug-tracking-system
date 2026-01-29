@@ -17,5 +17,6 @@ namespace BugTracker.Application.Interfaces.Services
         Task<PagedResult<UnassignedBugResponseDto>> SearchUnassignedBugsAsync( BugFilterQuery filter, PaginationQuery pagination, SortQuery sort);
         Task AssignBugToSelfAsync(Guid bugId, string developerId);
         Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId);
+        Task AssignBugAsync(Guid bugId, string developerId, string userId);
     }
 }
