@@ -1,4 +1,5 @@
-﻿using BugTracker.Application.DTOs.Bugs;
+﻿using BugTracker.Application.Common;
+using BugTracker.Application.DTOs.Bugs;
 using BugTracker.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace BugTracker.Application.Interfaces.Services
     public interface IBugService
     {
         Task CreateBugAsync(CreateBugRequestDto request, string userId);
-        Task<List<MyBugsResponseDto>> GetMyBugsAsync(string userId);
+        Task<PagedResult<MyBugsResponseDto>> GetMyBugsAsync( string userId, BugFilterQuery filter, PaginationQuery pagination, SortQuery sort);
         Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId);
-        Task<List<UnassignedBugResponseDto>> SearchUnassignedBugAsync(string? title);
+        Task<PagedResult<UnassignedBugResponseDto>> SearchUnassignedBugsAsync( BugFilterQuery filter, PaginationQuery pagination, SortQuery sort);
         Task AssignBugToSelfAsync(Guid bugId, string developerId);
         Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId);
     }
