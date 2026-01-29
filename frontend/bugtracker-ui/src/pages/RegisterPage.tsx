@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth.api";
 
-export default function RegisterPage() {
+const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -85,3 +85,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+export default RegisterPage;

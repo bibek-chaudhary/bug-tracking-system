@@ -7,6 +7,7 @@ import ProtectedRoute from "./component/ProtectedRoute";
 import UserLayout from "./layouts/UserLayout";
 import DeveloperLayout from "./layouts/DeveloperLayout";
 import Unauthorized from "./pages/Unauthorized";
+import MyBugsPage from "./pages/MyBugsPage";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
+          <Route index element={<MyBugsPage />} />
         </Route>
 
         {/* Developer Routes */}
