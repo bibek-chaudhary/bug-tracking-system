@@ -25,7 +25,7 @@ namespace BugTracker.Api.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
 
             await _bugService.CreateBugAsync(request, userId);
-            return Ok("Bug reported successfully");
+            return Ok(ApiResponse<string>.Ok("Bug reported successfully"));
         }
 
         [HttpGet("my")]
@@ -38,7 +38,15 @@ namespace BugTracker.Api.Controllers
             var result = await _bugService
                 .GetMyBugsAsync(userId, filter, pagination, sort);
 
-            return Ok(result);
+            return Ok(ApiResponse<IEnumerable<MyBugsResponseDto>>.Ok(
+                result.Items,
+                "My bugs fetched successfully",
+                new
+                {
+                    result.TotalCount,
+                    result.Page,
+                    result.PageSize
+                }));
         }
 
 
@@ -52,9 +60,9 @@ namespace BugTracker.Api.Controllers
             var bug = await _bugService.GetBugDetailAsync(id, userId);
 
             if (bug == null)
-                return NotFound("Bug not found");
+                throw new KeyNotFoundException("Bug not found");
 
-            return Ok(bug);
+            return Ok(ApiResponse<BugDetailsResponseDto>.Ok(bug, "Bug details fetched successfully"));
         }
 
         [HttpGet("unassigned")]
@@ -62,7 +70,16 @@ namespace BugTracker.Api.Controllers
         public async Task<IActionResult> GetUnassignedBugs([FromQuery] BugFilterQuery filter, [FromQuery] PaginationQuery pagination, [FromQuery] SortQuery sort)
         {
             var result = await _bugService.SearchUnassignedBugsAsync(filter, pagination, sort);
-            return Ok(result);
+
+            return Ok(ApiResponse<IEnumerable<UnassignedBugResponseDto>>.Ok(
+                result.Items,
+                "Unassigned bugs fetched successfully",
+                new {
+                    result.TotalCount,
+                    result.Page,
+                    result.PageSize
+                    })
+            );
         }
 
         [HttpPost("{id:guid}/assign")]
@@ -73,7 +90,7 @@ namespace BugTracker.Api.Controllers
 
             await _bugService.AssignBugToSelfAsync(id, developerId);
 
-            return Ok("Bug assigned to you successfully.");
+            return Ok(ApiResponse<string>.Ok("Bug assigned to you successfully"));
         }
 
         [HttpPatch("{id:guid}/status")]
@@ -85,7 +102,7 @@ namespace BugTracker.Api.Controllers
 
             await _bugService.UpdateBugStatusAsync(id, request.Status, developerId);
 
-            return Ok("Bug status updated successfully.");
+            return Ok(ApiResponse<string>.Ok("Bug status updated successfully"));
         }
     }
 }

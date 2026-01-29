@@ -1,4 +1,5 @@
-﻿using BugTracker.Application.DTOs.Auth;
+﻿using BugTracker.Application.Common;
+using BugTracker.Application.DTOs.Auth;
 using BugTracker.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +20,17 @@ namespace BugTracker.Api.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
             await _authService.RegisterAsync(request);
-            return Ok(new { Message = "User registered successfully." });
+            return Ok(ApiResponse<string>.Ok("User registered successfully"));
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             var token = await _authService.LoginAsync(request);
-            return Ok(new { Token = token });
+            return Ok(ApiResponse<LoginResponseDto>.Ok(
+                new LoginResponseDto { Token = token },
+                "Login successful"
+            ));
         }
     }
 }
