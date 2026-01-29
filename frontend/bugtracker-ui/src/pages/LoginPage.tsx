@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { authApi } from "../api/auth.api";
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,7 +16,7 @@ const LoginPage = () => {
       const res = await authApi.login({ email, password });
       if (res.success) {
         login(res.data!.token);
-        navigate("/developer");
+        navigate("/user");
       }
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
