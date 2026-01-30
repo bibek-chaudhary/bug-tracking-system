@@ -10,7 +10,6 @@ namespace BugTracker.Api.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    [Authorize(Roles = "User")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

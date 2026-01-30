@@ -18,7 +18,9 @@ namespace BugTracker.Domain.Entities
         public string? ReproductionSteps { get; private set; }
 
         public string CreatedByUserId { get; private set; } = null;
-        public string? AssignedToUserId { get; private set; } 
+        public ApplicationUser CreatedByUser { get; private set; } = null!;
+        public string? AssignedToUserId { get; private set; }
+        public ApplicationUser? AssignedToUser { get; private set; }
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
