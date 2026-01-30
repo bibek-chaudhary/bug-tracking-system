@@ -23,6 +23,8 @@ namespace BugTracker.Domain.Entities
         public ApplicationUser? AssignedToUser { get; private set; }
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime? AssignedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
 
         public ICollection<BugAttachment> Attachments { get; private set; } = new List<BugAttachment>();
 
@@ -46,6 +48,8 @@ namespace BugTracker.Domain.Entities
                 throw new InvalidOperationException("Only open bugs can be assigned.");
 
             AssignedToUserId = developerUserId;
+            AssignedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateStatus(BugStatus newStatus, string developerId)
@@ -56,12 +60,14 @@ namespace BugTracker.Domain.Entities
             if (Status == BugStatus.InProgress && newStatus == BugStatus.Resolved)
             {
                 Status = BugStatus.Resolved;
+                UpdatedAt = DateTime.UtcNow;
                 return;
             }
 
             if (Status == BugStatus.Resolved && newStatus == BugStatus.Closed)
             {
                 Status = BugStatus.Closed;
+                UpdatedAt = DateTime.UtcNow;
                 return;
             }
 

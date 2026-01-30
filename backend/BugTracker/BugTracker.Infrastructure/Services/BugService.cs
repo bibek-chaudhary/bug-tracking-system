@@ -133,6 +133,7 @@ namespace BugTracker.Infrastructure.Services
                 AssignedToUserId = bug.AssignedToUserId,
                 AssignedToUserName = bug.AssignedToUser?.UserName,
                 CreateAt = bug.CreatedAt,
+                
                 Attachments = bug.Attachments
                 .Select(a => new BugAttachmentDto
                 {

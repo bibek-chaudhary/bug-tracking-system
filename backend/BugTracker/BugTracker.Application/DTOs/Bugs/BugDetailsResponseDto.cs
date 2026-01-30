@@ -22,6 +22,8 @@ namespace BugTracker.Application.DTOs.Bugs
         public string AssignedToUserId { get; set; } = null!;
         public string AssignedToUserName { get; set; } = null!;
         public DateTime CreateAt { get; set; }
+        public DateTime? AssignedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public List<BugAttachmentDto> Attachments { get; set; } = [];
     }
