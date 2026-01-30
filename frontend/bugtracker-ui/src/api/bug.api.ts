@@ -42,4 +42,6 @@ export const bugsApi = {
 
   assignBugToDeveloper: (bugId: string, developerId: string) =>
     api.post(`/bugs/${bugId}/assign`, { developerId }),
+
+  closeBug: (bugId: string) => api.patch(`/bugs/${bugId}/close`),
 };

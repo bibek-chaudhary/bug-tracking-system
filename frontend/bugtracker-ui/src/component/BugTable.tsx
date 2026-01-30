@@ -43,12 +43,14 @@ const BugTable: React.FC<Props> = ({ bugs, onSort, onAssign }) => {
               {new Date(bug.createdAt).toLocaleDateString()}
             </td>
             <td className="p-2 border">
-              <button
-                onClick={() => onAssign?.(bug.id)}
-                className="bg-green-600 text-white px-3 py-1 rounded"
-              >
-                Assign to me
-              </button>
+              {role === "Developer" && (
+                <button
+                  onClick={() => onAssign?.(bug.id)}
+                  className="bg-green-600 text-white px-3 py-1 rounded"
+                >
+                  Assign to me
+                </button>
+              )}
               <Link to={`/bugs/${bug.id}`} className="text-blue-600 underline">
                 View
               </Link>

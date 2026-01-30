@@ -18,5 +18,6 @@ namespace BugTracker.Application.Interfaces.Services
         Task AssignBugToSelfAsync(Guid bugId, string developerId);
         Task UpdateBugStatusAsync(Guid bugId, BugStatus status, string developerId);
         Task AssignBugAsync(Guid bugId, string developerId, string userId);
+        Task CloseBugAsync(Guid bugId, string userId);
     }
 }
