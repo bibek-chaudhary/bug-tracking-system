@@ -26,15 +26,47 @@ const BugDetailsPage: React.FC = () => {
 
   return (
     <div className="space-y-3">
-      <h1 className="text-xl font-bold">{bug.data.title}</h1>
-      <p>{bug.data.description}</p>
 
-      <div className="flex gap-4">
-        <span>Status: {bug.data.status}</span>
-        <span>Severity: {bug.data.severity}</span>
-      </div>
+      
 
-      {bug.data.assignedToUserId === null && (
+      <div className="border rounded p-4 mt-6">
+        <h1 className="text-xl font-bold">{bug.data.title}</h1>
+
+        <p>
+          <strong>Description:</strong>{" "}
+          <span className="capitalize">{bug.data.description}</span>
+        </p>
+
+        <p>
+          <strong>Status:</strong>{" "}
+          <span className="capitalize">{bug.data.status}</span>
+        </p>
+
+        <p>
+          <strong>Severity:</strong>{" "}
+          <span className="capitalize">{bug.data.severity}</span>
+        </p>
+
+        <p>
+          <strong>Assigned Developer:</strong>{" "}
+          {bug.data.assignedToUserName ?? "Not assigned yet"}
+        </p>
+
+        <p>
+          <strong>Assigned At:</strong>{" "}
+          {bug.data.assignedAt
+            ? new Date(bug.data.assignedAt).toLocaleString()
+            : "-"}
+        </p>
+
+        <p>
+          <strong>Last Updated:</strong>{" "}
+          {bug.data.updatedAt
+            ? new Date(bug.data.updatedAt).toLocaleString()
+            : "-"}
+        </p>
+
+        {bug.data.assignedToUserId === null && (
         <div className="mt-4">
           <select
             value={selectedDev}
@@ -51,7 +83,9 @@ const BugDetailsPage: React.FC = () => {
 
           <button
             disabled={!selectedDev}
-            onClick={() => bugsApi.assignBugToDeveloper(bug.data.id, selectedDev)}
+            onClick={() =>
+              bugsApi.assignBugToDeveloper(bug.data.id, selectedDev)
+            }
             className="bg-blue-600 text-white px-4 py-2 rounded"
           >
             Assign
@@ -73,6 +107,7 @@ const BugDetailsPage: React.FC = () => {
           </ul>
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -109,23 +109,39 @@ namespace BugTracker.Infrastructure.Services
 
     public async Task<BugDetailsResponseDto?> GetBugDetailAsync(Guid bugId, string userId)
         {
-            return await _context.Bugs.Where(b => b.Id == bugId && b.CreatedByUserId == userId).Select(b => new BugDetailsResponseDto
+            var bug = await _context.Bugs
+        .Include(b => b.Attachments)
+        .Include(b => b.AssignedToUser)
+        .Include(b => b.CreatedByUser)
+        .FirstOrDefaultAsync(b => b.Id == bugId);
+
+            if (bug == null)
+                return null;
+
+            return new BugDetailsResponseDto
             {
-                Id = b.Id,
-                Title = b.Title,
-                Description = b.Description,
-                Severity = b.Severity,
-                Status = b.Status,
-                ReproductionSteps = b.ReproductionSteps,
-                CreateAt = b.CreatedAt,
-                Attachments = b.Attachments
+                Id = bug.Id,
+                Title = bug.Title,
+                Description = bug.Description,
+                Status = bug.Status,
+                Severity = bug.Severity,
+                ReproductionSteps = bug.ReproductionSteps,
+
+                CreatedByUserId = bug.CreatedByUserId,
+                CreatedByUserName = bug.CreatedByUser.UserName!,
+
+                AssignedToUserId = bug.AssignedToUserId,
+                AssignedToUserName = bug.AssignedToUser?.UserName,
+                CreateAt = bug.CreatedAt,
+                
+                Attachments = bug.Attachments
                 .Select(a => new BugAttachmentDto
                 {
                     Id = a.Id,
                     FileName = a.FileName,
                     FilePath = a.FilePath
                 }).ToList()
-            }).FirstOrDefaultAsync();
+            };
         }
 
 
