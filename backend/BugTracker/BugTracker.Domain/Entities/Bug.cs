@@ -54,8 +54,6 @@ namespace BugTracker.Domain.Entities
 
         public void UpdateStatus(BugStatus newStatus, string developerId)
         {
-            if (AssignedToUserId != developerId)
-                throw new UnauthorizedAccessException("You are not assigned to this bug.");
 
             if (Status == BugStatus.InProgress && newStatus == BugStatus.Resolved)
             {

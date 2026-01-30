@@ -3,17 +3,16 @@ import { useEffect, useState } from "react";
 import { bugsApi } from "../api/bug.api";
 import { getImageUrl } from "../utils/getImageUrl";
 import { usersApi } from "../api/users.api";
+import { useAuth } from "../context/AuthContext";
 
 const BugDetailsPage: React.FC = () => {
+  const { role } = useAuth();
   const { id } = useParams();
-  console.log("id", id);
   const [bug, setBug] = useState<any>(null);
 
   useEffect(() => {
     bugsApi.getBugDetails(id!).then((res) => setBug(res.data));
   }, [id]);
-
-  console.log("bug", bug);
 
   const [developers, setDevelopers] = useState<any[]>([]);
   const [selectedDev, setSelectedDev] = useState("");
@@ -26,9 +25,6 @@ const BugDetailsPage: React.FC = () => {
 
   return (
     <div className="space-y-3">
-
-      
-
       <div className="border rounded p-4 mt-6">
         <h1 className="text-xl font-bold">{bug.data.title}</h1>
 
@@ -66,47 +62,56 @@ const BugDetailsPage: React.FC = () => {
             : "-"}
         </p>
 
-        {bug.data.assignedToUserId === null && (
-        <div className="mt-4">
-          <select
-            value={selectedDev}
-            onChange={(e) => setSelectedDev(e.target.value)}
-            className="border p-2 mr-2"
-          >
-            <option value="">Select Developer</option>
-            {developers.map((dev) => (
-              <option key={dev.id} value={dev.id}>
-                {dev.name}
-              </option>
-            ))}
-          </select>
+        {role === "User" && bug.data.assignedToUserId === null && (
+          <div className="mt-4">
+            <select
+              value={selectedDev}
+              onChange={(e) => setSelectedDev(e.target.value)}
+              className="border p-2 mr-2"
+            >
+              <option value="">Select Developer</option>
+              {developers.map((dev) => (
+                <option key={dev.id} value={dev.id}>
+                  {dev.name}
+                </option>
+              ))}
+            </select>
 
+            <button
+              disabled={!selectedDev}
+              onClick={() =>
+                bugsApi.assignBugToDeveloper(bug.data.id, selectedDev)
+              }
+              className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Assign
+            </button>
+          </div>
+        )}
+
+        {bug.data.attachments?.length > 0 && (
+          <div>
+            <h3 className="font-semibold">Attachments</h3>
+            <ul>
+              {bug.data.attachments.map((a: any) => (
+                <li key={a.id}>
+                  <a href={getImageUrl(a.filePath)} target="_blank">
+                    View
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {role === "User"  && (
           <button
-            disabled={!selectedDev}
-            onClick={() =>
-              bugsApi.assignBugToDeveloper(bug.data.id, selectedDev)
-            }
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={() => bugsApi.closeBug(bug.data.id)}
+            className="bg-red-600 text-white px-4 py-2 rounded mt-4"
           >
-            Assign
+            Close Bug
           </button>
-        </div>
-      )}
-
-      {bug.data.attachments?.length > 0 && (
-        <div>
-          <h3 className="font-semibold">Attachments</h3>
-          <ul>
-            {bug.data.attachments.map((a: any) => (
-              <li key={a.id}>
-                <a href={getImageUrl(a.filePath)} target="_blank">
-                  View
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
