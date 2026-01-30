@@ -16,7 +16,7 @@ export const bugsApi = {
 
   getBugDetails: (id: string) => api.get(`/bugs/${id}`),
 
-  assignBugToSelf: (id: string) => api.post(`/bugs/${id}/assign`),
+  assignBugToSelf: (id: string) => api.post(`/bugs/${id}/assignSelf`),
 
   updateBugStatus: (id: string, status: string) =>
     api.patch(`/bugs/${id}/status`, { status }),
