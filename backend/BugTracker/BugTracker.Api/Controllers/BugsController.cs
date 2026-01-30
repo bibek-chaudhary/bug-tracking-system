@@ -84,7 +84,7 @@ namespace BugTracker.Api.Controllers
             );
         }
 
-        [HttpPost("{id:guid}/assign")]
+        [HttpPost("{id:guid}/assignSelf")]
         [Authorize(Roles = "Developer")]
         public async Task<IActionResult> AssignBugToSelf(Guid id)
         {

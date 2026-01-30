@@ -208,9 +208,26 @@ namespace BugTracker.Infrastructure.Services
             if (bug == null)
                 throw new KeyNotFoundException("Bug not found.");
 
+            if (bug.AssignedToUserId != developerId)
+                throw new UnauthorizedAccessException("Bug not assigned to you");
+
+            if (!IsValidTransition(bug.Status, status))
+                throw new InvalidOperationException(
+                    $"Invalid status transition from {bug.Status} to {status}");
+
             bug.UpdateStatus(status, developerId);
 
             await _context.SaveChangesAsync();
+        }
+
+        public static bool IsValidTransition(BugStatus current, BugStatus next)
+        {
+            return current switch
+            {
+                BugStatus.Open => next == BugStatus.InProgress,
+                BugStatus.InProgress => next == BugStatus.Resolved,
+                _ => false
+            };
         }
 
         public async Task AssignBugAsync(Guid bugId, string developerId, string userId)
