@@ -119,5 +119,17 @@ namespace BugTracker.Api.Controllers
             return Ok(ApiResponse<string>.Ok("Bug assigned to you successfully"));
         }
 
+        [Authorize(Roles = "User")]
+        [HttpPatch("{id:guid}/close")]
+        public async Task<IActionResult> CloseBug(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException();
+
+            await _bugService.CloseBugAsync(id, userId);
+
+            return Ok(ApiResponse<string>.Ok("Bug closed successfully"));
+        }
+
     }
 }

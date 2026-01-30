@@ -262,5 +262,25 @@ namespace BugTracker.Infrastructure.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task CloseBugAsync(Guid bugId, string userId)
+        {
+            var bug = await _context.Bugs
+                .FirstOrDefaultAsync(b => b.Id == bugId);
+
+            if (bug == null)
+                throw new KeyNotFoundException("Bug not found");
+
+            if (bug.CreatedByUserId != userId)
+                throw new UnauthorizedAccessException("You can close only your own bugs");
+
+            if (bug.Status != BugStatus.Resolved)
+                throw new InvalidOperationException("Bug must be resolved before closing");
+
+            bug.UpdateStatus(BugStatus.Closed, userId);
+
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 }
