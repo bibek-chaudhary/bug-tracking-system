@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    //navigate("/login");
   };
 
   return (
