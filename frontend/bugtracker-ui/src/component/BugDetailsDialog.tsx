@@ -106,10 +106,9 @@ const BugDetailsDialog: React.FC<Props> = ({ bugId, onClose }) => {
             </p>
           </div>
 
-          {role === "User" &&
-            bug?.assignedToUserId === null &&
-            developersData?.length && (
-              <div className="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+          {role === "User" && bug?.assignedToUserId === null && (
+            <div className="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+              {developersData?.length ? (
                 <select
                   value={selectedDev}
                   onChange={(e) => setSelectedDev(e.target.value)}
@@ -122,16 +121,19 @@ const BugDetailsDialog: React.FC<Props> = ({ bugId, onClose }) => {
                     </option>
                   ))}
                 </select>
+              ) : (
+                <span>No any developer to assignBug</span>
+              )}
 
-                <button
-                  disabled={!selectedDev}
-                  onClick={handleAssign}
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-                >
-                  {assignBug.isPending ? "Assigning..." : "Assign"}
-                </button>
-              </div>
-            )}
+              <button
+                disabled={!selectedDev}
+                onClick={handleAssign}
+                className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                {assignBug.isPending ? "Assigning..." : "Assign"}
+              </button>
+            </div>
+          )}
 
           {bug?.attachments?.length ? (
             <div>
