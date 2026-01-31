@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getUserRole, logout } from "../../utils/authHelp";
 
 type SidebarItem = {
@@ -9,7 +9,6 @@ type SidebarItem = {
 
 const Sidebar: React.FC = () => {
   const role = getUserRole();
-  const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
