@@ -1,32 +1,63 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { authApi } from "../api/auth.api";
+import {  Link } from "react-router-dom";
+import { useLoginMutation } from "../hooks/useAuthMutations";
+import toast from "react-hot-toast";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { login, role } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      console.log("role", role);
-      const res = await authApi.login({ email, password });
-      if (res.success) {
-        login(res.data!.token);
-        if (role === "User") navigate("/user");
-        else navigate("/developer");
-      }
-    } catch (err: any) {
-      setError(err.message || "Login failed. Please try again.");
+  const { mutate: loginMutate, isPending } = useLoginMutation();
+
+  const validateForm = () => {
+    if (!email) {
+      toast.error("Email is required");
+      return false;
     }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Email is invalid");
+      return false;
+    }
+    if (!password) {
+      toast.error("Password is required");
+      return false;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    loginMutate(
+      { email, password },
+      {
+        onSuccess: (res) => {
+          console.log("API response:", res);
+          if (res.success && res.data?.token) {
+            toast.success(res.message);
+            window.location.href = "/";
+          } else {
+            toast.error("Login failed: Invalid credentials");
+          }
+        },
+        onError: (err: any) => {
+          console.error("Login failed", err);
+          toast.error(
+            err?.response?.data?.message || "Login failed. Please try again.",
+          );
+        },
+      },
+    );
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-lg w-96 max-w-full"
@@ -35,63 +66,46 @@ const LoginPage: React.FC = () => {
           Welcome Back
         </h2>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-        )}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border border-gray-300 p-3 mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
 
-        <div className="mb-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="mb-4">
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center justify-between mb-6 text-sm text-gray-500">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="form-checkbox" />
-            Remember me
-          </label>
-          <a href="#" className="hover:underline">
-            Forgot password?
-          </a>
-        </div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border border-gray-300 p-3 mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+        />
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          className={`w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition ${
+            isPending ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isPending}
         >
-          Login
+          {isPending ? "Logging in..." : "Login"}
         </button>
 
-        <div className="mt-6 text-center text-gray-400">or login with</div>
-
-        <div className="flex justify-center mt-4 gap-4">
-          <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-            Google
-          </button>
-          <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
-            GitHub
-          </button>
+        <div className="flex items-center my-4">
+          <hr className="grow border-t border-gray-300" />
+          <span className="mx-2 text-gray-400 text-sm">or</span>
+          <hr className="grow border-t border-gray-300" />
         </div>
 
-        <p className="mt-6 text-center text-gray-500 text-sm">
-          Don’t have an account?{" "}
-          <a href="/register" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
+        <p className="text-center text-gray-600 text-sm">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Register
+          </Link>
         </p>
       </form>
     </div>

@@ -92,7 +92,8 @@ namespace BugTracker.Infrastructure.Services
                     Title = b.Title,
                     Severity = b.Severity,
                     Status = b.Status,
-                    CreatedAt = b.CreatedAt
+                    CreatedAt = b.CreatedAt,
+                    AssignedToUserId = b.AssignedToUserId
                 })
                 .AsNoTracking()
                 .ToListAsync();
@@ -132,8 +133,10 @@ namespace BugTracker.Infrastructure.Services
 
                 AssignedToUserId = bug.AssignedToUserId,
                 AssignedToUserName = bug.AssignedToUser?.UserName,
-                CreateAt = bug.CreatedAt,
-                
+                CreatedAt = bug.CreatedAt,
+                AssignedAt = bug.AssignedAt,
+                UpdatedAt = bug.UpdatedAt,
+
                 Attachments = bug.Attachments
                 .Select(a => new BugAttachmentDto
                 {
@@ -191,7 +194,8 @@ namespace BugTracker.Infrastructure.Services
                     Title = b.Title,
                     Severity = b.Severity,
                     Status = b.Status,
-                    CreatedAt = b.CreatedAt
+                    CreatedAt = b.CreatedAt,
+                    AssignedToUserId = b.AssignedToUserId
                 })
                 .AsNoTracking()
                 .ToListAsync();
@@ -226,10 +230,6 @@ namespace BugTracker.Infrastructure.Services
 
             if (bug.AssignedToUserId != developerId)
                 throw new UnauthorizedAccessException("Bug not assigned to you");
-
-            if (!IsValidTransition(bug.Status, status))
-                throw new InvalidOperationException(
-                    $"Invalid status transition from {bug.Status} to {status}");
 
             bug.UpdateStatus(status, developerId);
 

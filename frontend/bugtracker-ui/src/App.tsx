@@ -1,50 +1,41 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ProtectedRoute from "./component/ProtectedRoute";
-import UserLayout from "./layouts/UserLayout";
-import DeveloperLayout from "./layouts/DeveloperLayout";
-import Unauthorized from "./pages/Unauthorized";
-import MyBugsPage from "./pages/MyBugsPage";
 import ReportBugPage from "./pages/ReportBugPage";
-import UnassignedBugsPage from "./pages/UnassignedBugsPage";
-import BugDetailsPage from "./pages/BugDetailsPage";
+import UnassignedBug from "./pages/UnassignedBug";
+import { getToken } from "./utils/authHelp";
+import { Toaster } from "react-hot-toast";
+import DashboardPage from "./pages/DashboardPage";
+//import { getToken } from "./utils/authHelp";
 
 function App() {
+  const isAuthenticated = !!getToken();
+  console.log("isAuth", isAuthenticated);
   return (
     <BrowserRouter>
+      <Toaster position="bottom-right" reverseOrder={false} />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        {/* <Route path="/" element={<Dashboard />} /> */}
-
         <Route
-          path="/user"
+          path="/"
           element={
-            <ProtectedRoute allowedRoles={["User"]}>
-              <UserLayout />
-            </ProtectedRoute>
+            isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />
           }
-        >
-          <Route index element={<MyBugsPage />} />
-          <Route path="report" element={<ReportBugPage />} />
-        </Route>
-
+        />
         <Route
-          path="/developer"
+          path="report-bug"
           element={
-            <ProtectedRoute allowedRoles={["Developer"]}>
-              <DeveloperLayout />
-            </ProtectedRoute>
+            isAuthenticated ? <ReportBugPage /> : <Navigate to="/login" />
           }
-        >
-          <Route index element={<UnassignedBugsPage />} />
-          <Route path="assigned" element={<MyBugsPage />} />
-        </Route>
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/bugs/:id" element={<BugDetailsPage />} />
-
+        />
+        <Route
+          path="/unassigned-bug"
+          element={
+            isAuthenticated ? <UnassignedBug /> : <Navigate to="/login" />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

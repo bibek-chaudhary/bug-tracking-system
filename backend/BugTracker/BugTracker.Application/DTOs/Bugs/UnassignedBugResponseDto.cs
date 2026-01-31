@@ -14,5 +14,6 @@ namespace BugTracker.Application.DTOs.Bugs
         public BugSeverity Severity { get; set; }
         public BugStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string AssignedToUserId { get; set; } = null!;
     }
 }
