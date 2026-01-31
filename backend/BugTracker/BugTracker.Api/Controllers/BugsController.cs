@@ -116,7 +116,7 @@ namespace BugTracker.Api.Controllers
 
             await _bugService.AssignBugAsync(id, request.DeveloperId, userId);
 
-            return Ok(ApiResponse<string>.Ok("Bug assigned to you successfully"));
+            return Ok(ApiResponse<string>.Ok("Bug assigned to developer successfully"));
         }
 
         [Authorize(Roles = "User")]

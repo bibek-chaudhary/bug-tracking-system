@@ -54,23 +54,9 @@ namespace BugTracker.Domain.Entities
 
         public void UpdateStatus(BugStatus newStatus, string developerId)
         {
-
-            if (Status == BugStatus.InProgress && newStatus == BugStatus.Resolved)
-            {
-                Status = BugStatus.Resolved;
-                UpdatedAt = DateTime.UtcNow;
-                return;
-            }
-
-            if (Status == BugStatus.Resolved && newStatus == BugStatus.Closed)
-            {
-                Status = BugStatus.Closed;
-                UpdatedAt = DateTime.UtcNow;
-                return;
-            }
-
-            throw new InvalidOperationException(
-                $"Invalid status transition from {Status} to {newStatus}");
+            Status = newStatus;
+            UpdatedAt = DateTime.UtcNow;
+            return;
         }
     }
 }

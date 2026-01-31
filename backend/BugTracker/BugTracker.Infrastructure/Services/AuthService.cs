@@ -47,7 +47,7 @@ namespace BugTracker.Infrastructure.Services
 
             if (!validPassword)
             {
-                throw new Exception("Invalid password");
+                throw new InvalidOperationException("Invalid password");
             }
 
             return await _jwtTokenGenerator.GenerateTokenAsync(user);

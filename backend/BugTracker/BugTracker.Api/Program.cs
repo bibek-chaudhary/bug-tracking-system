@@ -1,10 +1,12 @@
 using BugTracker.Application.Interfaces.Services;
 using BugTracker.Infrastructure.Extensions;
 using BugTracker.Infrastructure.Identity;
+using BugTracker.Infrastructure.Persistence;
 using BugTracker.Infrastructure.Services;
 using BugTracker.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -59,6 +61,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 using (var scope = app.Services.CreateScope())
 {
